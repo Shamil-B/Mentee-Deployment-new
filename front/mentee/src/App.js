@@ -13,6 +13,7 @@ import LectureDetailPage from "./screens/lecture_detail_page";
 import Dashboard from "./screens/dashboard";
 import ProfilePage from "./screens/profile_page";
 import CreateLecture from "./components/create_lecture";
+import PusherPage from "./screens/pusher";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="lecture/:id" element={<LectureDetailPage />} />
         <Route path="create" element={<CreateLecture />} />
+        <Route path="pusher" element={<PusherPage />} />
         <Route path="*" element={<div>404</div>} />
       </Routes>
     </BrowserRouter>

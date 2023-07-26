@@ -1,5 +1,4 @@
 import React from "react";
-import io from "socket.io-client";
 import { Link } from "react-router-dom";
 
 import { useParams } from "react-router-dom";
@@ -17,8 +16,6 @@ export default function ClassStatusPage(props) {
   const classId = id.toString();
   const isActive = true;
   const isInstructor = false;
-
-  const socket = io.connect("http://localhost:5000");
 
   useEffect(() => {
     fetch(localIp + "/lecture/" + classId, {

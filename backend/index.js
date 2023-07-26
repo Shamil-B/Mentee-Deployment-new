@@ -3,53 +3,114 @@ const http = require("http");
 const app = express();
 const server = http.createServer(app);
 const cors = require("cors");
-const mongoose = require("mongoose")
-// ############ Untouchable code ############
-const io = require("socket.io")(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-  },
+const mongoose = require("mongoose");
+const Pusher = require("pusher");
+const bodyParser = require("body-parser");
+
+// ################ New Pusher Setup ################
+
+app.use(bodyParser.json());
+app.use(cors());
+
+// Create a new instance of Pusher with your Pusher credentials
+const pusher = new Pusher({
+  appId: "1639415",
+  key: "20d590a2a5e4500caac1",
+  secret: "42ecf3e2bf8a165ddd94",
+  cluster: "ap2",
+  useTLS: true,
 });
 
-const connectionString = `mongodb+srv://afmtoday:OlxwPFCF0rLMnA3e@cluster0.edrrjyh.mongodb.net/mentee?retryWrites=true&w=majority`;
+// pusher.trigger("my-channel", "my-event", {
+//   message: "hello world",
+// });
 
-mongoose.connect(connectionString, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .catch((err) => {
-    console.error('Error connecting to MongoDB:', err);
-  });
+// API route to trigger an event
+//
 
+// ############ Untouchable code ############
+// const io = require("socket.io")(server, {
+//   cors: {
+//     origin: "http://localhost:3000",
+//     methods: ["GET", "POST"],
+//   },
+// });
+
+// const connectionString = `mongodb+srv://afmtoday:OlxwPFCF0rLMnA3e@cluster0.edrrjyh.mongodb.net/mentee?retryWrites=true&w=majority`;
+
+// mongoose
+//   .connect(connectionString, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => {
+//     console.log("Connected to MongoDB");
+//   })
+//   .catch((err) => {
+//     console.error("Error connecting to MongoDB:", err);
+//   });
+
+const users = [
+  { name: "user1", email: "user1@gmail.com" },
+  { name: "user2", email: "user2@gmail.com" },
+  { name: "user3", email: "user3@gmail.com" },
+  { name: "user4", email: "user4@gmail.com" },
+  { name: "user5", email: "user5@gmail.com" },
+  { name: "user6", email: "user6@gmail.com" },
+];
+
+// to get a random number
 
 app.use(cors());
 
-io.on("connection", (socket) => {
-  socket.on("join-room", (roomId, isTeacher, userId) => {
-    console.log(
-      "joining room",
-      roomId,
-      "my id is:",
-      userId,
-      "isTeacher:",
-      isTeacher
-    );
-    socket.join(roomId);
-    socket.to(roomId).emit("user-connected", userId, isTeacher);
-  });
-
-  socket.on("disconnect", (userId) => {
-    socket.emit("user-disconnected", userId);
-  });
-
-  socket.on("chat-message-to-server", (message, roomId) => {
-    io.to(roomId).emit("chat-message", message);
-  });
+app.post("/connection", (req, res) => {
+  const { roomId, userId } = req.body;
+  console.log("user connected", userId, roomId);
+  pusher.trigger(roomId, "user-connected", { roomId: roomId, userId: userId });
 });
+
+app.post("/my-info", (req, res) => {
+  const { token } = req.body;
+  const randomIndex = Math.floor(Math.random() * 7);
+  res.json(users[randomIndex]);
+});
+
+app.post("/chat", (req, res) => {
+  const { roomId, message } = req.body;
+  console.log("message:", message, roomId);
+  pusher
+    .trigger(roomId, "chat-message", message)
+    .then(() => {
+      console.log("it works");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+// io.on("connection", (socket) => {
+//   socket.on("join-room", (roomId, isTeacher, userId) => {
+//     console.log(
+//       "joining room",
+//       roomId,
+//       "my id is:",
+//       userId,
+//       "isTeacher:",
+//       isTeacher
+//     );
+//     socket.join(roomId);
+//     socket.to(roomId).emit("user-connected", userId, isTeacher);
+//   });
+
+// ############################## user disconnected skipped #####################
+// socket.on("disconnect", (userId) => {
+//   socket.emit("user-disconnected", userId);
+// });
+
+//   socket.on("chat-message-to-server", (message, roomId) => {
+//     io.to(roomId).emit("chat-message", message);
+//   });
+// });
 
 // ############ Untouchable code ############
 

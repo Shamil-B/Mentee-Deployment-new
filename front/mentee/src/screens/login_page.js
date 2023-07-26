@@ -66,8 +66,8 @@ export default function LoginPage() {
             console.log(field);
             if (field.showWhenSignUp) {
               return (
-                <div key={index} className="w-full">
-                  <label className="ml-4 mb-2 block relative top-5 bg-gray-100 w-fit text-gray-500 px-2 shadow shadow-md rounded">
+                <div key={index} className="w-full my-3">
+                  <label className="mb-2 block relative top-1 bg-gray-200 w-fit text-gray-700 px-2 ">
                     {field.label}
                   </label>
                   <input
