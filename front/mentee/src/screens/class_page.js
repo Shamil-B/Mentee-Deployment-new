@@ -356,7 +356,6 @@ export default function ClassPage() {
           setUserInfo((prev) => {
             return { ...prev, name: data.name, email: data.email };
           });
-          // console.log(userInfo, data);
         })
         .catch((err) => {
           console.log(err);
