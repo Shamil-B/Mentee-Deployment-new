@@ -346,7 +346,10 @@ export default function ClassPage() {
         token: "",
       }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        console.log("........", res);
+        return res.json();
+      })
       .then((data) => {
         console.log("hereee");
         setUserInfo((prev) => {

@@ -50,16 +50,13 @@ const pusher = new Pusher({
 //     console.error("Error connecting to MongoDB:", err);
 //   });
 
-const users = [
-  { name: "user1", email: "user1@gmail.com" },
-  { name: "user2", email: "user2@gmail.com" },
-  { name: "user3", email: "user3@gmail.com" },
-  { name: "user4", email: "user4@gmail.com" },
-  { name: "user5", email: "user5@gmail.com" },
-  { name: "user6", email: "user6@gmail.com" },
-];
-
-// to get a random number
+const users = [];
+for (let i = 0; i < 50; i++) {
+  users.push({
+    name: "User " + i.toString(),
+    email: "user " + i.toString() + "@example.com",
+  });
+}
 
 app.use(cors());
 
@@ -71,7 +68,7 @@ app.post("/connection", (req, res) => {
 
 app.post("/my-info", (req, res) => {
   const { token } = req.body;
-  const randomIndex = Math.floor(Math.random() * 7);
+  const randomIndex = Math.floor(Math.random() * 50);
   res.json(users[randomIndex]);
 });
 
