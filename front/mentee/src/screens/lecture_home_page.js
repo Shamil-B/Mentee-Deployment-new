@@ -3,12 +3,13 @@ import CourseCard from "../components/lecture_card";
 import { useState, useEffect } from "react";
 import MenteeHeader from "../components/mentee_header.js";
 import LectureCard from "../components/lecture_card";
+import { localIp } from "../constants";
 
 export default function LecturesHomePage() {
   const [allLectures, setAllLectures] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/lectures")
+    fetch(localIp + "/lectures")
       .then((res) => res.json())
       .then((data) => {
         setAllLectures(data);

@@ -3,6 +3,7 @@ import LectureCard from "../components/lecture_card";
 import Footer from "../components/footer";
 import Profile from "../components/profile";
 import MenteeHeader from "../components/mentee_header";
+import { localIp } from "../constants";
 
 export default function Dashboard() {
   const [allLectures, setAllLectures] = useState([]);
@@ -14,7 +15,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     // we should fetch for both subscribed and created lectures and set their corresponding states
-    fetch("http://localhost:5000/lectures")
+    fetch(localIp + "/lectures")
       .then((res) => res.json())
       .then((data) => {
         setAllLectures(data);
@@ -25,7 +26,7 @@ export default function Dashboard() {
 
     // and the above fetch should be removed
 
-    fetch("http://localhost:5000/profile")
+    fetch(localIp + "/profile")
       .then((res) => res.json())
       .then((data) => {
         setProfileInfo(data);
