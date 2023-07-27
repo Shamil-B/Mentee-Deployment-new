@@ -459,7 +459,7 @@ export default function ClassPage() {
       peer.off("open", handleOpen);
       peer.destroy();
     };
-  }, [userInfoUpdated]);
+  }, [userInfo]);
 
   return (
     <div className="class bg-gray-800 h-screen flex w-full overflow-hidden relative">
