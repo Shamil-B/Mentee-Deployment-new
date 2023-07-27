@@ -337,29 +337,31 @@ export default function ClassPage() {
       }
     });
 
-    fetch(`${localIp}/my-info`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token: "",
-      }),
-    })
-      .then((res) => {
-        console.log("........", res);
-        return res.json();
+    if (userInfo.name === "unknown") {
+      fetch(`${localIp}/my-info`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: "",
+        }),
       })
-      .then((data) => {
-        console.log("hereee");
-        setUserInfo((prev) => {
-          return { ...prev, name: data.name, email: data.email };
+        .then((res) => {
+          console.log("........", res);
+          return res.json();
+        })
+        .then((data) => {
+          console.log("hereee");
+          setUserInfo((prev) => {
+            return { ...prev, name: data.name, email: data.email };
+          });
+          // console.log(userInfo, data);
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        // console.log(userInfo, data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    }
 
     fetch(`${localIp}/lecture/${roomId}`, {
       method: "GET",
@@ -458,7 +460,7 @@ export default function ClassPage() {
       peer.off("open", handleOpen);
       peer.destroy();
     };
-  }, [userInfo]);
+  }, [userInfoUpdated]);
 
   return (
     <div className="class bg-gray-800 h-screen flex w-full overflow-hidden relative">
