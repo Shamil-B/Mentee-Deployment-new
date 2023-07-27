@@ -50,7 +50,7 @@ const pusher = new Pusher({
 //     console.error("Error connecting to MongoDB:", err);
 //   });
 
-const users = [];
+var users = [];
 for (let i = 0; i < 50; i++) {
   users.push({
     name: "User " + i.toString(),
