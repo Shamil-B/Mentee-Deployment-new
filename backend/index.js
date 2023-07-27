@@ -408,6 +408,7 @@ const profile1 = {
 app.get("/", (req, res) => {
   res.json(homePageData);
 });
+
 server.listen(5000, () => console.log("server is running on port 5000"));
 
 app.get("/lecture/:id", (req, res) => {

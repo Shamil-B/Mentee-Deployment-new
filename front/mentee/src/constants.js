@@ -1,5 +1,5 @@
 const globalIp = "http://192.168.135.214:5000";
-const localIp = "mentee-deployment-new-backend.vercel.app";
+const localIp = "https://mentee-deployment-new-backend.vercel.app";
 const localLinks = [
   "Home",
   "Pricing",
