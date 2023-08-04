@@ -7,10 +7,24 @@ const mongoose = require("mongoose");
 const Pusher = require("pusher");
 const bodyParser = require("body-parser");
 
-// ################ New Pusher Setup ################
-
 app.use(bodyParser.json());
 app.use(cors());
+
+const connectionString = `mongodb+srv://afmtoday:OlxwPFCF0rLMnA3e@cluster0.edrrjyh.mongodb.net/mentee?retryWrites=true&w=majority`;
+
+mongoose
+  .connect(connectionString, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((err) => {
+    console.error("Error connecting to MongoDB:", err);
+  });
+
+// ################ New Pusher Setup ################
 
 // Create a new instance of Pusher with your Pusher credentials
 const pusher = new Pusher({
@@ -21,35 +35,6 @@ const pusher = new Pusher({
   useTLS: true,
 });
 
-// pusher.trigger("my-channel", "my-event", {
-//   message: "hello world",
-// });
-
-// API route to trigger an event
-//
-
-// ############ Untouchable code ############
-// const io = require("socket.io")(server, {
-//   cors: {
-//     origin: "http://localhost:3000",
-//     methods: ["GET", "POST"],
-//   },
-// });
-
-// const connectionString = `mongodb+srv://afmtoday:OlxwPFCF0rLMnA3e@cluster0.edrrjyh.mongodb.net/mentee?retryWrites=true&w=majority`;
-
-// mongoose
-//   .connect(connectionString, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => {
-//     console.log("Connected to MongoDB");
-//   })
-//   .catch((err) => {
-//     console.error("Error connecting to MongoDB:", err);
-//   });
-
 var users = [];
 for (let i = 0; i < 50; i++) {
   users.push({
@@ -58,12 +43,19 @@ for (let i = 0; i < 50; i++) {
   });
 }
 
-app.use(cors());
-
 app.post("/connection", (req, res) => {
   const { roomId, userId } = req.body;
   console.log("user connected", userId, roomId);
-  pusher.trigger(roomId, "user-connected", { roomId: roomId, userId: userId });
+  try {
+    pusher.trigger(roomId, "user-connected", {
+      roomId: roomId,
+      userId: userId,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500);
+  }
+  res.status(200);
 });
 
 app.post("/my-info", (req, res) => {
@@ -85,31 +77,26 @@ app.post("/chat", (req, res) => {
     });
 });
 
-// io.on("connection", (socket) => {
-//   socket.on("join-room", (roomId, isTeacher, userId) => {
-//     console.log(
-//       "joining room",
-//       roomId,
-//       "my id is:",
-//       userId,
-//       "isTeacher:",
-//       isTeacher
-//     );
-//     socket.join(roomId);
-//     socket.to(roomId).emit("user-connected", userId, isTeacher);
-//   });
+// ############ New Pusher Setup ends ############
 
-// ############################## user disconnected skipped #####################
-// socket.on("disconnect", (userId) => {
-//   socket.emit("user-disconnected", userId);
-// });
+app.get("/", (req, res) => {
+  res.json(homePageData);
+});
 
-//   socket.on("chat-message-to-server", (message, roomId) => {
-//     io.to(roomId).emit("chat-message", message);
-//   });
-// });
+server.listen(5000, () => console.log("server is running on port 5000"));
 
-// ############ Untouchable code ############
+app.get("/lecture/:id", (req, res) => {
+  const id = req.params.id;
+  res.json(lectures[id - 1]);
+});
+
+app.get("/profile", (req, res) => {
+  res.json(profile1);
+});
+
+app.get("/lectures", (req, res) => {
+  res.json(lectures);
+});
 
 // ########## sample data ##########
 const homePageData = {
@@ -400,23 +387,4 @@ const profile1 = {
   image_src: "/images/person_3.png",
 };
 
-// ########## sample data  ##########
-
-app.get("/", (req, res) => {
-  res.json(homePageData);
-});
-
-server.listen(5000, () => console.log("server is running on port 5000"));
-
-app.get("/lecture/:id", (req, res) => {
-  const id = req.params.id;
-  res.json(lectures[id - 1]);
-});
-
-app.get("/profile", (req, res) => {
-  res.json(profile1);
-});
-
-app.get("/lectures", (req, res) => {
-  res.json(lectures);
-});
+// ########## sample data ends  ##########

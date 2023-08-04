@@ -5,6 +5,9 @@ import Footer from "../components/footer";
 import MenteeHeader from "../components/mentee_header";
 import { localIp } from "../constants";
 
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
 export default function LectureDetailPage() {
   const lectureId = useParams().id;
   const [lectureDetail, setLectureDetail] = useState(null);
@@ -32,6 +35,7 @@ export default function LectureDetailPage() {
       <MenteeHeader search={false} />
       {lectureDetail ? (
         <LectureDetail
+          loading={false}
           title={lectureDetail.title}
           image={lectureDetail.instructor.image_src}
           instructorName={lectureDetail.instructor.name}
@@ -45,7 +49,9 @@ export default function LectureDetailPage() {
           price={lectureDetail.price}
         />
       ) : (
-        <div>loading...</div>
+        <div>
+          <LectureDetail loading={true} />
+        </div>
       )}
       <div className="">
         <Footer />

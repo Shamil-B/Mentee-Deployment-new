@@ -5,6 +5,9 @@ import MenteeHeader from "../components/mentee_header.js";
 import LectureCard from "../components/lecture_card";
 import { localIp } from "../constants";
 
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
 export default function LecturesHomePage() {
   const [allLectures, setAllLectures] = useState([]);
 

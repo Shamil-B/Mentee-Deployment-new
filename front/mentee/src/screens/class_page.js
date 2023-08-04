@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import io from "socket.io-client";
 import Peer from "peerjs";
 import { localIp } from "../constants";
 
@@ -11,12 +10,8 @@ import {
   faPause,
   faVolumeUp,
   faVolumeMute,
-  faL,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-// done
-// const socket = io.connect(localIp);
 
 export default function ClassPage() {
   const [chatWidth, setChatWidth] = useState("w-0");
@@ -45,7 +40,6 @@ export default function ClassPage() {
 
   const [isStreamAvailable, setIsStreamAvailable] = useState(false);
 
-  // TODO first we fetch the user details from the backend and will use it to display the user details including in the chat
   console.log(userInfo, ">......");
   const toggleChat = () => {
     if (chatWidth === "w-4/12") {
@@ -100,8 +94,6 @@ export default function ClassPage() {
 
     setMessages((prevMessages) => [...prevMessages, message]);
     messageBox.value = "";
-    // done
-    // socket.emit("chat-message-to-server", message, roomId);
 
     fetch(`${localIp}/chat`, {
       method: "POST",
@@ -394,6 +386,7 @@ export default function ClassPage() {
 
     if (!isTeacher) {
       peer.on("call", (call) => {
+        console.log("being called");
         setIsPlaying(false);
         setIsStreamAvailable(false);
         call.answer();
@@ -409,8 +402,6 @@ export default function ClassPage() {
 
     const handleOpen = (id) => {
       if (!roomJoined) {
-        // done
-        // socket.emit("join-room", roomId, isTeacher, id);
         fetch(`${localIp}/connection`, {
           method: "POST",
           headers: {
@@ -423,37 +414,16 @@ export default function ClassPage() {
         })
           .then((res) => {
             console.log("sucess in joining req");
+            setRoomJoined(true);
           })
           .catch((err) => {
             console.log(err);
           });
-        setRoomJoined(true);
       }
-
-      // done
-      // socket.on("user-connected", (userId, isUserTeacher) => {
-      //   addStudent(userId);
-      //   if (isTeacher) {
-      //     joinNewStudent(userId, isUserTeacher);
-      //   }
-      // });
-
-      // done
-      // socket.on("user-disconnected", (studentId) => {
-      //   removeStudent(studentId);
-      // });
     };
 
     peer.on("open", handleOpen);
-
-    // done
-    // socket.on("chat-message", handleChatMessage);
-
-    // binds
-
     return () => {
-      // done
-      // socket.off("chat-message", handleChatMessage);
       myRoom.unbind_all();
       pusher.unsubscribe(roomId);
       peer.off("open", handleOpen);
