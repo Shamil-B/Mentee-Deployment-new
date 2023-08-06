@@ -10,11 +10,18 @@ import {
   faPause,
   faVolumeUp,
   faVolumeMute,
+  faStop,
+  faVideo,
+  faPaperPlane,
+  faVideoSlash,
+  faShareSquare,
+  faComments,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function ClassPage() {
-  const [chatWidth, setChatWidth] = useState("w-0");
+  const [chatWidth, setChatWidth] = useState("0");
+  const [chatPos, setChatPos] = useState("-right-full");
   const [videoWidth, setVideoWidth] = useState("w-full");
   const [roomJoined, setRoomJoined] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -42,21 +49,35 @@ export default function ClassPage() {
 
   console.log(userInfo, ">......");
   const toggleChat = () => {
-    if (chatWidth === "w-4/12") {
-      setChatWidth("w-0");
+    if (chatPos === "right-0") {
+      // setChatWidth("0");
+      setChatPos("-right-full");
       setVideoWidth("w-full");
     } else {
-      setChatWidth("w-4/12");
-      setVideoWidth("w-8/12");
+      // setChatWidth("4/12");
+      setChatPos("right-0");
+      setVideoWidth("w-9/12");
     }
   };
 
   function shareButton(text, onPress) {
+    var icon = <></>;
+    if (text === "Start Screen Share") {
+      icon = <FontAwesomeIcon icon={faShareSquare} className="mr-2" />;
+    } else if (text === "Stop Screen Share") {
+      icon = <FontAwesomeIcon icon={faStop} className="mr-2" />;
+    } else if (text === "Start Video") {
+      icon = <FontAwesomeIcon icon={faVideo} className="mr-2" />;
+    } else if (text === "Stop Video") {
+      icon = <FontAwesomeIcon icon={faVideoSlash} className="mr-2" />;
+    }
+
     return (
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+        className="bg-blue-600 text-gray-200 font-semibold text-lg px-4 py-2 rounded hover:bg-blue-700 transition-all duration-200 ease-in-out shadow  shadow-md-gray-8"
         onClick={onPress}
       >
+        {icon}
         {text}
       </button>
     );
@@ -158,7 +179,7 @@ export default function ClassPage() {
 
   function controls() {
     return (
-      <div className="controls flex  bg-gray-700 px-10 py-4 w-80 justify-between h-fit mt-8">
+      <div className="controls flex  bg-gray-700 px-10 py-4 w-80 justify-between h-fit ">
         <button onClick={playPauseVideo} className="">
           <FontAwesomeIcon
             icon={isPlaying ? faPause : faPlay}
@@ -309,6 +330,7 @@ export default function ClassPage() {
         message.status =
           (date.getHours() % 12).toString() +
           ":" +
+          (date.getMinutes() < 10 ? "0" : "") +
           date.getMinutes().toString() +
           (date.getHours() > 11 ? " PM" : " AM");
 
@@ -322,6 +344,7 @@ export default function ClassPage() {
         message.status =
           (date.getHours() % 12).toString() +
           ":" +
+          (date.getMinutes() < 10 ? "0" : "") +
           date.getMinutes().toString() +
           (date.getHours() > 11 ? " PM" : " AM");
 
@@ -386,7 +409,6 @@ export default function ClassPage() {
 
     if (!isTeacher) {
       peer.on("call", (call) => {
-        console.log("being called");
         setIsPlaying(false);
         setIsStreamAvailable(false);
         call.answer();
@@ -414,11 +436,11 @@ export default function ClassPage() {
         })
           .then((res) => {
             console.log("sucess in joining req");
-            setRoomJoined(true);
           })
           .catch((err) => {
             console.log(err);
           });
+        setRoomJoined(true);
       }
     };
 
@@ -433,7 +455,7 @@ export default function ClassPage() {
 
   return (
     <div className="class bg-gray-800 h-screen flex w-full overflow-hidden relative">
-      <div
+      {/* <div
         className={`flex justify-center align-center py-8 text-xl font-semibold text-gray-100 fixed bg-black opacity-80 bottom-0 gap-8 transition-all duration-500 ease-in-out ${videoWidth}`}
       >
         <div className="text-xl font-bold">
@@ -441,10 +463,10 @@ export default function ClassPage() {
             ? "Error loading Lecture data"
             : lectureDetails.title}
         </div>
-      </div>
+      </div> */}
 
       <div
-        className={`video-container h-full  ${videoWidth} transition-all duration-500 ease-in-out flex flex-col`}
+        className={`video-container h-full relative ${videoWidth} transition-all duration-500 ease-in-out flex flex-col`}
       >
         <div className="h-4/5 my-auto px-4 flex justify-center relative">
           {" "}
@@ -467,15 +489,15 @@ export default function ClassPage() {
           )}
           <video ref={videoRef} className="h-full bg-gray-900"></video>
         </div>
-        <div className="h-1/5 flex justify-evenly text-white items-baseline">
-          <div className="flex gap-4 flex-wrap ml-10">
+        <div className="pb-12 flex justify-evenly text-white items-center">
+          <div className="flex gap-4 flex-wrap w-fit">
             {isTeacher
               ? shareButton("Start Screen Share", startScreenShare)
               : ""}
             {isTeacher ? shareButton("Stop Screen Share", stopScreenShare) : ""}
           </div>
           {controls()}
-          <div className="flex gap-4 flex-wrap ml-10">
+          <div className="flex gap-4 flex-wrap w-fit">
             {" "}
             {isTeacher ? shareButton("Start Video", startVideoStream) : ""}
             {isTeacher ? shareButton("Stop Video", stopVideoStream) : ""}
@@ -483,24 +505,28 @@ export default function ClassPage() {
         </div>
       </div>
       <div
-        className={`chat-container bg-white ${chatWidth} transition-all duration-500 ease-in-out relative border border-md border-gray-900`}
+        className={`chat-container bg-gray-600 w-3/12 fixed ${chatPos} h-screen transition-all duration-500 ease-in-out border border-md border-gray-900`}
       >
         <button
           className={
-            "absolute top-0 rounded-b-3xl right-0 bg-gray-500 px-4 py-2 text-white"
+            "fixed top-0 rounded-b-3xl right-0 bg-gray-500 px-4 py-2 text-white z-10"
           }
           onClick={toggleChat}
         >
           CHAT
         </button>
-        <div className="chat-header flex justify-center p-8 bg-blue-200 text-gray-600 text-xl font-bold">
+        <div className="chat-header flex justify-center py-8 bg-gray-200 text-gray-700 text-xl font-bold items-center ">
+          <FontAwesomeIcon
+            icon={faComments}
+            className="mr-2 text-blue-600 fa-2x"
+          ></FontAwesomeIcon>
           Chat Room
         </div>
         <div className="chat-messages overflow-auto max-h-full p-4">
           {messages.map((message, index) => (
             <div
               key={index}
-              className="chat-message flex flex-col bg-gray-100 rounded-r-lg mr-4 mt-2 text-gray-700 relative"
+              className="chat-message flex flex-col bg-gray-200 rounded-r-lg mr-4 mt-2 text-gray-700 relative"
             >
               <div className="chat-message-sender font-bold pl-2 pt-2">
                 {message.sender}
@@ -515,16 +541,17 @@ export default function ClassPage() {
         </div>
         <div className="chat-input flex absolute bottom-0 w-full">
           <input
-            className="w-full border border-gray-300 rounded px-5 py-2 text-medium focus:outline-none focus:border-gray-400"
+            className="w-full border border-gray-100  px-5 py-3 text-lg focus:outline-none focus:border-gray-400 bg-gray-200"
             type="text"
             placeholder="Enter your message"
             id="message"
             onKeyDown={handleKeyDown}
           />
           <button
-            className="right-0 bg-gray-500 px-4 py-2 text-white"
+            className="right-0 bg-blue-600 px-5 py-2 text-white font-semibold flex gap-2 items-center"
             onClick={addMessage}
           >
+            <FontAwesomeIcon icon={faPaperPlane} className=""></FontAwesomeIcon>
             SEND
           </button>
         </div>

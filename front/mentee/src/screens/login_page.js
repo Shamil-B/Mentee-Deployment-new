@@ -83,9 +83,9 @@ export default function LoginPage() {
           })}
 
           <div className="w-full mb-2 flex flex-col items-center gap-2 mt-4">
-            <PrimaryButton text={isLogin ? "Log In" : "Sign Up"} />
+            {/* <PrimaryButton text={isLogin ? "Log In" : "Sign Up"} /> */}
             <Link to="/lectures">
-              <PrimaryButton text={"Skip for now"} />
+              <PrimaryButton text={"Log in"} />
             </Link>
           </div>
 

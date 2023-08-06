@@ -6,7 +6,6 @@ import { PrimaryButton } from "../components/buttons.js";
 
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { localIp } from "../constants.js";
 
 // things to improve on this page to make it professional are the following
 
@@ -65,11 +64,8 @@ export default function Home() {
   const [socialLogos, setSocialLogos] = useState([]);
 
   useEffect(() => {
-    fetch(localIp)
-      .then((res) => {
-        console.log(res);
-        return res.json();
-      })
+    fetch("http://localhost:5000/")
+      .then((res) => res.json())
       .then((data) => {
         setHomePageData(data);
         setFeatureCards(data.featureCards);
@@ -89,7 +85,7 @@ export default function Home() {
         getStartedButton={homePageData.getStartedButton}
         heroImage={homePageData.heroImage}
       />
-      <div className="social-logos flex-column justify-center align-center ">
+      {/* <div className="social-logos flex-column justify-center align-center ">
         <div className="flex justify-center text-2xl text-gray-800 font-bold">
           Get Us On
         </div>
@@ -104,7 +100,7 @@ export default function Home() {
             );
           })}
         </ul>
-      </div>
+      </div> */}
 
       <div className="experts mt-28">
         <div className="flex flex-col justify-center align-center gap-4">
